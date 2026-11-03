@@ -1,0 +1,15 @@
+__pycache__/
+*.pyc
+
+# extracted test sets (the .zip files are tracked)
+data/seqgen_test_1008/
+data/treebase_1144/
+
+# outputs of the pipeline
+sim/
+labels/
+encoded/
+runs/
+out/
+*.npz
+!simulation/regime_pool.npz
