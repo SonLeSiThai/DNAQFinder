@@ -226,13 +226,12 @@ python evaluation/predict.py <fasta file or folder> -o predictions.csv
 
 ## Reproducibility notes
 
-- **Simulators are not seeded.** The scripts seed the parameter draws, but they do not pass a seed to AliSim or Seq-Gen. A rerun therefore reproduces the model strings, trees and branch-length scales, but not the sequences. The released network was trained on the original simulated alignments; they are not part of this repository (about 17 GB together with the empirical data).
+- **Simulators are not seeded.** The scripts seed the parameter draws, but they do not pass a seed to AliSim or Seq-Gen. A rerun therefore reproduces the model strings, trees and branch-length scales, but not the sequences. The released network was trained on the original simulated alignments. These and the empirical training, validation and internal-test alignments (about 17 GB in total) are not part of this repository; they are available from the authors on request.
 - **Training is not bit-reproducible.** GPU kernels and the order of the training files change the result. In addition, every DataLoader worker starts from the same column-sampling generator, so the sampled columns depend on `--workers`. The released checkpoint is the one evaluated in the paper.
-- **The Seq-Gen test set shares trees with training.** 752 of its 1,008 alignments use a tree topology from ModelRevelator's tree file that also occurs in the Seq-Gen training sets. Branch lengths and substitution parameters are drawn anew, and no test alignment is identical to a training alignment. ModelRevelator was trained on alignments simulated from the same tree file.
 
 ## Citation
 
-Le Si Thai Son, Phan Cong Duong, Tran Ho Manh Duc, Nguyen Huy Tinh, Le Sy Vinh. DNAQFinder: a fast machine learning method for nucleotide substitution model selection on empirical alignments. Submitted to RIVF 2026.
+Le Si Thai Son, Phan Cong Duong, Tran Ho Manh Duc, Nguyen Huy Tinh, Le Sy Vinh. DNAQFinder: a fast machine learning method for nucleotide substitution model selection on empirical alignments. Accepted at RIVF 2026.
 
 ## References
 
