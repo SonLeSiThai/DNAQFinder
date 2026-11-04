@@ -16,6 +16,42 @@ Results reported in the paper:
 
 Top-2 counts a prediction as correct when the reference model is one of the two classes with the highest probability. In the paper's CPU runtime test, the average time per alignment of the simulated test set was 12 ms for DNAQFinder and 0.83 s for the model-selection phase of ModelFinder.
 
+## Quick start: predicting with the trained network
+
+The trained network is part of the repository (`model/best_mean.pt`, 2.2 MB), so no training is needed. Prediction requires Python with NumPy, pandas and PyTorch. It runs on a CPU and does not use IQ-TREE or a GPU.
+
+```bash
+git clone https://github.com/SonLeSiThai/DNAQFinder.git
+cd DNAQFinder
+pip install -r requirements.txt
+python evaluation/predict.py examples/
+```
+
+Instead of `git clone`, the repository can also be downloaded as a ZIP file from GitHub (Code → Download ZIP).
+
+Output of the last command:
+
+```text
+alignment                                          model   p(JC K2P F81 HKY TN GTR)
+sim0000_JC_8t_1000bp.fasta                            JC   0.898 0.025 0.055 0.008 0.006 0.008
+treebase_M18070.fasta                                 TN   0.006 0.009 0.006 0.007 0.942 0.030
+treebase_M21595.fasta                                 TN   0.011 0.039 0.013 0.249 0.613 0.075
+3 alignment(s); mean network time 460.1 ms per alignment
+```
+
+The first alignment was simulated under JC. For the two TreeBASE alignments, ModelFinder selected TN+F+I+G4 and K2P+I+G4. The reported time includes the PyTorch start-up of the first call.
+
+For your own alignments:
+
+```bash
+python evaluation/predict.py my_alignment.fasta
+python evaluation/predict.py my_alignments/ -o predictions.csv
+```
+
+- **Input:** aligned DNA sequences in FASTA format. A folder is searched recursively for `*.fasta`, `*.fa`, `*.fas` and `*.aln`. Characters other than A, C, G and T (upper or lower case) are counted as gaps. Sequences of unequal length are truncated to the shortest one.
+- **Output:** the predicted class and the probabilities of JC, K2P, F81, HKY, TN (TN93) and GTR. With `-o`, the same values are written to a CSV file with the columns `fasta, prediction, p_JC, p_K2P, p_F81, p_HKY, p_TN, p_GTR`.
+- **What is predicted:** DNAQFinder predicts the substitution matrix only. It does not decide whether `+I` or `+G` should be added.
+
 ## Contents
 
 | Path | Content |
@@ -33,13 +69,15 @@ Top-2 counts a prediction as correct when the reference model is one of the two 
 | `model/best_mean.pt` | released network, 553,896 parameters; SHA-256 `8fbb2c2050814f25a051a17f2a76d243794d4055cf0d657f0f84876856693aca` |
 | `data/seqgen_test_1008.zip` | simulated test set (1,008 alignments, generating model as label) |
 | `data/treebase_1144.zip` | TreeBASE test set (1,144 alignments, ModelFinder label) |
+| `examples/` | three alignments for a first test of `predict.py` |
 
 ## Requirements
 
-- Python 3 with NumPy, pandas and PyTorch (tested with Python 3.13.2, NumPy 2.2.3, pandas 2.2.3 and PyTorch 2.9.0); astroML for the Seq-Gen simulation.
+- Python 3 with NumPy, pandas and PyTorch (tested with Python 3.13.2, NumPy 2.2.3, pandas 2.2.3 and PyTorch 2.9.0). The Seq-Gen simulation also needs astroML (tested with 1.0.2).
 
   ```bash
   pip install -r requirements.txt
+  pip install astroML        # only for simulation/seqgen_modelrevelator.py
   ```
 
 - External programs, needed only for steps 1–2:
